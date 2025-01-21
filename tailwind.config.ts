@@ -1,4 +1,4 @@
-import type { Config } from "tailwindcss"
+import type { Config } from "tailwindcss";
 
 const config: Config = {
   content: [
@@ -10,6 +10,14 @@ const config: Config = {
   theme: {
     extend: {
       keyframes: {
+        "slide-in": {
+          "0%": { transform: "translateY(20px)", opacity: "0" },
+          "100%": { transform: "translateY(0)", opacity: "1" },
+        },
+        "fade-in": {
+          "0%": { opacity: "0" },
+          "100%": { opacity: "1" },
+        },
         hide: {
           from: { opacity: "1" },
           to: { opacity: "0" },
@@ -80,8 +88,10 @@ const config: Config = {
       drawerSlideLeftAndFade:
         "drawerSlideLeftAndFade 150ms cubic-bezier(0.16, 1, 0.3, 1)",
       drawerSlideRightAndFade: "drawerSlideRightAndFade 150ms ease-in",
+      "slide-in": "slide-in 0.3s ease-out",
+      "fade-in": "fade-in 0.3s ease-out",
     },
   },
   plugins: [require("@tailwindcss/forms")],
-}
-export default config
+};
+export default config;
