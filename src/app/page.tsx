@@ -1,14 +1,26 @@
-"use client";
-import { Input } from "@/components/ui/Input";
-import { Container } from "@/components/Wrapper";
-import { useState } from "react";
+import { Card } from "@/components/ui/Card";
 
-export default function Home() {
+import { prisma } from "@/utils/prisma";
+
+export default async function Home() {
+  const tasks = await prisma.task.findMany();
+
+  async function addNewTask(formData: FormData) {
+    "use server";
+    const title = formData.get("title") as string;
+
+    await prisma.task.create({ data: { title } });
+  }
+
   return (
-    <Container>
-      <div className="flex  w-full gap-4 justify-center item-center">
-        <Input placeholder="Masukan task ..." />
-      </div>
-    </Container>
+    <div>
+      {tasks.map((task) => {
+        return (
+          <Card key={task.id}>
+            <h1>{task.title}</h1>
+          </Card>
+        );
+      })}
+    </div>
   );
 }
