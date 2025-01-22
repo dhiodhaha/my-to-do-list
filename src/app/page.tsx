@@ -1,16 +1,9 @@
 import { Card } from "@/components/ui/Card";
 
-import { prisma } from "@/utils/prisma";
+import { prisma } from "@/lib/utils";
 
 export default async function Home() {
   const tasks = await prisma.task.findMany();
-
-  async function addNewTask(formData: FormData) {
-    "use server";
-    const title = formData.get("title") as string;
-
-    await prisma.task.create({ data: { title } });
-  }
 
   return (
     <div>
