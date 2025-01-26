@@ -4,6 +4,13 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
+interface ActionResponse<T = unknown> {
+  success: boolean;
+  message?: string;
+  data?: T;
+  error?: string;
+}
+
 // Shared schemas
 const taskSchema = z.object({
   title: z.string().trim().min(1, "Title cannot be empty"),

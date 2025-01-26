@@ -1,5 +1,5 @@
 "use client";
-import { useState, useRef, useEffect, useTransition } from "react";
+import { useState, useRef, useTransition } from "react";
 import { DeleteButton } from "./DeleteButton";
 import { Task } from "@/types/task";
 import { motion } from "framer-motion";

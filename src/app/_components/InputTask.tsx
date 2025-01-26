@@ -8,7 +8,6 @@ import { createTask } from "@/lib/actions";
 export const InputTask = () => {
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
-  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter") {
