@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { StringToBoolean } from "tailwind-variants";
 
 export interface Task {
   id: string;
