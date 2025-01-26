@@ -55,7 +55,26 @@ export async function deleteTask(formData: FormData) {
   }
 }
 
-async function createSubTask(formData: FormData) {}
+type createSubstaskAction = {
+  taskId: string;
+  title: string;
+  subtaskId?: string;
+  isCompleted: boolean;
+};
+
+export async function createSubtask({
+  taskId,
+  title,
+}: // subtaskId,
+// isCompleted,
+createSubstaskAction) {
+  try {
+    await prisma.subtask.create({
+      data: { title, taskId, isCompleted: false },
+    });
+    revalidatePath("/");
+  } catch (error) {}
+}
 
 async function updateSubTask(formData: FormData) {}
 

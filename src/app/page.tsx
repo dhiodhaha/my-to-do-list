@@ -1,6 +1,6 @@
-import { prisma } from "@/lib/utils";
+import { prisma } from "@/lib/prisma";
 import { InputTask } from "./_components/InputTask";
-import TaskCard from "@/components/features/task/TaskCard";
+// import TaskCard from "@/components/features/task/TaskList";
 import { Header } from "@/components/sharedUI/Header";
 
 export default async function Home() {
@@ -11,7 +11,7 @@ export default async function Home() {
       <Header />
       <div className="flex flex-col ">
         <InputTask />
-        <TaskCard />
+        {/* <TaskCard /> */}
       </div>
     </main>
   );
