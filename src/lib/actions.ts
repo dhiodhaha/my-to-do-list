@@ -51,15 +51,52 @@ const subtaskSchema = taskSchema.extend({
   taskId: idSchema,
 });
 
-export const createSubtask = async (formData: FormData) => {
-  const rawData = {
-    title: formData.get("title"),
-    taskId: formData.get("taskId"),
-  };
-  const validatedData = subtaskSchema.parse(rawData);
-  return handleResponse(
-    () =>
-      prisma.subtask.create({ data: { ...validatedData, isCompleted: false } }),
-    "Subtask created successfully"
-  );
+// actions.ts (Update createSubtask action)
+export async function createSubtask(formData: FormData) {
+  try {
+    const rawData = {
+      title: formData.get("title"),
+      taskId: formData.get("taskId"),
+    };
+    const validatedData = subtaskSchema.parse(rawData);
+
+    await prisma.subtask.create({
+      data: { ...validatedData, isCompleted: false },
+    });
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    // Handle errors
+  }
+}
+
+// actions.ts (Add this new action)
+export async function toggleTaskCompletion(taskId: string, completed: boolean) {
+  try {
+    await prisma.task.update({
+      where: { id: taskId },
+      data: { isCompleted: !completed },
+    });
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to update task" };
+  }
+}
+
+export const toggleSubtaskCompletion = async (
+  subtaskId: string,
+  isCompleted: boolean
+) => {
+  try {
+    await prisma.subtask.update({
+      where: { id: subtaskId },
+      data: { isCompleted: !isCompleted },
+    });
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: "Failed to update subtask" };
+  }
 };

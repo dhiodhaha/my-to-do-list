@@ -1,7 +1,7 @@
 export interface Task {
   id: string;
   title: string;
-  completed: boolean;
+  isCompleted: boolean;
   // daily: boolean;
   subtask: SubTask[];
 }
@@ -9,5 +9,5 @@ export interface Task {
 export interface SubTask {
   id: string;
   title: string;
-  completed: boolean;
+  isCompleted: boolean;
 }

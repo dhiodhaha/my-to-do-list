@@ -4,7 +4,13 @@ import { Button } from "@/components/ui/Button";
 import { deleteTask } from "@/lib/actions";
 import { useTransition } from "react";
 
-export const DeleteButton = ({ taskId }: { taskId: string }) => {
+export const DeleteButton = ({
+  taskId,
+  isVisible,
+}: {
+  taskId: string;
+  isVisible: boolean;
+}) => {
   const [isPending, startTransition] = useTransition();
 
   const handleDelete = () => {
@@ -23,6 +29,9 @@ export const DeleteButton = ({ taskId }: { taskId: string }) => {
         variant="destructive"
         disabled={isPending}
         aria-label="Delete task"
+        className={` transition-opacity ${
+          isVisible ? "opacity-100" : "opacity-0"
+        }`}
       >
         {isPending ? "Deleting ...." : "Delete"}
       </Button>

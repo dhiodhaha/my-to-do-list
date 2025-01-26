@@ -8,9 +8,10 @@ import { createTask } from "@/lib/actions";
 export const InputTask = () => {
   const [isPending, startTransition] = useTransition();
   const formRef = useRef<HTMLFormElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && e.ctrlKey) {
+    if (e.key === "Enter") {
       e.preventDefault();
       formRef.current?.requestSubmit();
     }
@@ -29,10 +30,11 @@ export const InputTask = () => {
   return (
     <form ref={formRef} action={handleSubmit} className="flex gap-4 p-2 ">
       <Input
-        placeholder="Add task"
+        placeholder="Add new task"
         name="title"
         onKeyDown={handleKeyDown}
         disabled={isPending}
+        autoFocus
         required
       />
       <Button type="submit" disabled={isPending}>

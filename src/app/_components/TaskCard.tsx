@@ -1,36 +1,88 @@
 "use client";
-
-import { useState } from "react";
-import { Card } from "@/components/ui/Card";
+import { useState, useRef, useEffect, useTransition } from "react";
 import { DeleteButton } from "./DeleteButton";
+import { Task } from "@/types/task";
+import { motion } from "framer-motion";
+import { Checkbox } from "@/components/ui/Checkbox";
 import { SubTasksList } from "./SubTaskList";
+import { toggleTaskCompletion } from "@/lib/actions";
 
-export const TaskCard = ({
+export function TaskCard({
   task,
+  isActive,
+  onClick,
 }: {
-  task: {
-    id: string;
-    title: string;
-    subtask: Array<{ id: string; title: string; isCompleted: boolean }>;
+  task: Task;
+  isActive: boolean;
+  onClick: () => void;
+}) {
+  const [isHovered, setIsHovered] = useState(false);
+  const titleRef = useRef<HTMLDivElement>(null);
+  const [isPending, startTransition] = useTransition(); // Add this line
+  const [isChecked, setIsChecked] = useState(task.isCompleted);
+
+  const handleToggleComplete = () => {
+    setIsChecked(!isChecked);
+    startTransition(async () => {
+      const result = await toggleTaskCompletion(task.id, task.isCompleted);
+      await toggleTaskCompletion(task.id, task.isCompleted);
+      if (!result?.success) setIsChecked(task.isCompleted);
+    });
   };
-}) => {
-  const [isActive, setIsActive] = useState(false);
+
+  const handleTitleClick = (e: React.MouseEvent) => {
+    const target = e.target as HTMLElement;
+    if (!target.closest("button")) {
+      onClick();
+    }
+  };
 
   return (
-    <Card
-      className="hover:bg-slate-50 p-4 mb-2 cursor-pointer"
-      onClick={() => setIsActive(!isActive)}
+    <motion.div
+      className="relative group"
+      initial={{ opacity: 0, y: -10 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: 10 }}
+      onHoverStart={() => setIsHovered(true)}
+      onHoverEnd={() => setIsHovered(false)}
     >
-      <div className="flex justify-between items-center">
-        <div className="flex items-center gap-2">
-          <h2 className="font-medium">{task.title}</h2>
-        </div>
-        <DeleteButton taskId={task.id} />
-      </div>
+      <div
+        className={`p-4 rounded-lg shadow-sm border transition-all duration-300 ${
+          isActive
+            ? "bg-white ring-2 ring-blue-500"
+            : "bg-gray-50 hover:bg-white"
+        }`}
+      >
+        <div className="flex items-center justify-between">
+          <div
+            ref={titleRef}
+            className="flex-1 flex items-center gap-2 cursor-pointer"
+            onClick={handleTitleClick}
+          >
+            <Checkbox
+              className="w-5 h-5"
+              checked={isChecked}
+              onCheckedChange={handleToggleComplete}
+              disabled={isPending}
+            />
+            <span
+              className={`text-lg ${
+                isChecked ? "line-through text-gray-400" : ""
+              }`}
+            >
+              {task.title}
+            </span>
+          </div>
 
-      <div className={`mt-2 ${isActive ? "block" : "hidden"}`}>
-        <SubTasksList taskId={task.id} subtasks={task.subtask} />
+          <DeleteButton taskId={task.id} isVisible={isHovered} />
+        </div>
+
+        <SubTasksList
+          taskId={task.id}
+          subtasks={task.subtask}
+          isVisible={isActive}
+        />
       </div>
-    </Card>
+    </motion.div>
   );
-};
+}
