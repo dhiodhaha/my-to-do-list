@@ -3,8 +3,7 @@
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
 import React, { useTransition, useRef } from "react";
-import { createTask } from "@/lib/action";
-import { revalidatePath } from "next/cache";
+import { createTask } from "@/lib/actions";
 
 export const InputTask = () => {
   const [isPending, startTransition] = useTransition();

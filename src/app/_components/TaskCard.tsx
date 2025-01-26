@@ -1,23 +1,36 @@
-import { Card } from "@/components/ui/Card";
-import React from "react";
-import type { Task } from "@/types/task";
-import { prisma } from "@/lib/prisma";
-import { DeleteButton } from "./DeleteButton";
+"use client";
 
-export default async function TaskCard({ tasks }) {
-  const tasks: Task[] = await prisma.task.findMany();
+import { useState } from "react";
+import { Card } from "@/components/ui/Card";
+import { DeleteButton } from "./DeleteButton";
+import { SubTasksList } from "./SubTaskList";
+
+export const TaskCard = ({
+  task,
+}: {
+  task: {
+    id: string;
+    title: string;
+    subtask: Array<{ id: string; title: string; isCompleted: boolean }>;
+  };
+}) => {
+  const [isActive, setIsActive] = useState(false);
 
   return (
     <Card
-      key={tasks.id}
-      className="hover:bg-slate-50 flex justify-between items-center"
+      className="hover:bg-slate-50 p-4 mb-2 cursor-pointer"
+      onClick={() => setIsActive(!isActive)}
     >
-      <div className="flex items-center gap-2">
-        {/* <Checkbox checked={task.completed} /> */}
-        <h1>{tasks.title}</h1>
+      <div className="flex justify-between items-center">
+        <div className="flex items-center gap-2">
+          <h2 className="font-medium">{task.title}</h2>
+        </div>
+        <DeleteButton taskId={task.id} />
       </div>
 
-      <DeleteButton taskId={tasks.id} />
+      <div className={`mt-2 ${isActive ? "block" : "hidden"}`}>
+        <SubTasksList taskId={task.id} subtasks={task.subtask} />
+      </div>
     </Card>
   );
-}
+};

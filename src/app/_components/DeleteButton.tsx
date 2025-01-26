@@ -1,7 +1,7 @@
 "use client";
 
 import { Button } from "@/components/ui/Button";
-import { deleteTask } from "@/lib/action";
+import { deleteTask } from "@/lib/actions";
 import { useTransition } from "react";
 
 export const DeleteButton = ({ taskId }: { taskId: string }) => {

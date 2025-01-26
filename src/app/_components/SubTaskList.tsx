@@ -1,78 +1,51 @@
 "use client";
 
-import React, { useState } from "react";
-import type { Task, SubTask } from "@/types/task";
-import { prisma } from "@/lib/prisma";
-import { Input } from "@/components/ui/Input";
+import { useState } from "react";
 import { Checkbox } from "@/components/ui/Checkbox";
-import { createSubtask } from "@/lib/action";
-import { boolean } from "zod";
+import { Input } from "@/components/ui/Input";
+import { createSubtask } from "@/lib/actions";
 
-interface TaskCardProps {
-  task: {
-    id: string;
-    subtask: Array<{ id: string; title: string; isCompleted: boolean }>;
-  };
-  isActive: boolean;
-}
-
-export default async function SubTasksList({ task, isActive }: TaskCardProps) {
+export const SubTasksList = ({
+  taskId,
+  subtasks,
+}: {
+  taskId: string;
+  subtasks: Array<{ id: string; title: string; isCompleted: boolean }>;
+}) => {
   const [input, setInput] = useState("");
 
-  const handleCreateSubtask = async (formData: FormData) => {
-    const title = formData.get("subtask") as string;
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!input.trim()) return;
+
+    const formData = new FormData();
+    formData.append("title", input);
+    formData.append("taskId", taskId);
+
+    await createSubtask(formData);
     setInput("");
-    await createSubtask({ taskId: task.id, title });
-  }; // kayaknya bisa divalidasi pake zod kan?
-
-  const subTasks: SubTask[] = await prisma.subtask.findMany();
-  const [newSubtask, setNewSubtask] = useState("");
-
-  const handleAddSubtask = (e: React.KeyboardEvent) => {
-    if (e.key === "Enter" && newSubtask.trim()) {
-      onAddSubtask(task.id, newSubtask.trim());
-      setNewSubtask("");
-    }
   };
 
   return (
-    <div>
-      <div
-        className={`overflow-hidden transition-all duration-300 ease-in-out ${
-          isActive ? "max-h-96 opacity-100" : "max-h-0 opacity-0"
-        }`}
-      >
-        <div className="space-y-2">
-          {task.subtask.map((subtask) => (
-            <div
-              key={subtask.id}
-              className="flex items-center justify-between p-2 text-sm bg-gray-50 rounded-md animate-fade-in"
-            >
-              <div className="flex items-center flex-1">
-                <Checkbox
-                  checked={subtask.completed}
-                  onCheckedChange={() =>
-                    onToggleSubtaskComplete(task.id, subtask.id)
-                  }
-                  className="mr-2"
-                />
-              </div>
-            </div>
-          ))}
-          <form>
-            {/* must refactor this */}
-            <input
-              type="text"
-              placeholder="Add sub task"
-              className="w-full p-2 text-sm border rounded-md focus:outline-none focus:ring-1 focus:ring-blue-500 bg-transparent"
-              value={newSubtask}
-              onChange={(e) => setNewSubtask(e.target.value)}
-              onKeyDown={handleAddSubtask}
-              onClick={(e) => e.stopPropagation()}
-            />
-          </form>
+    <div className="space-y-2">
+      {subtasks.map((subtask) => (
+        <div
+          key={subtask.id}
+          className="flex items-center p-2 text-sm bg-gray-50 rounded-md"
+        >
+          <Checkbox checked={subtask.isCompleted} className="mr-2" />
+          <span>{subtask.title}</span>
         </div>
-      </div>
+      ))}
+
+      <form onSubmit={handleSubmit}>
+        <Input
+          placeholder="Add sub task"
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          className="w-full p-2 text-sm border rounded-md"
+        />
+      </form>
     </div>
   );
-}
+};

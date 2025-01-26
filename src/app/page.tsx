@@ -1,17 +1,15 @@
-import { prisma } from "@/lib/prisma";
+// import { TaskList } from "@/components/TaskList";
 import { InputTask } from "./_components/InputTask";
-// import TaskCard from "@/components/features/task/TaskList";
 import { Header } from "@/components/sharedUI/Header";
+import { TaskList } from "./_components/TaskList";
 
-export default async function Home() {
-  const tasks = await prisma.task.findMany();
-
+export default function Home() {
   return (
-    <main className="items-center justify-center flex flex-col h-screen">
+    <main className="min-h-screen flex flex-col items-center p-4 md:p-8">
       <Header />
-      <div className="flex flex-col ">
+      <div className="w-full max-w-2xl space-y-8 mt-12">
         <InputTask />
-        {/* <TaskCard /> */}
+        <TaskList />
       </div>
     </main>
   );
