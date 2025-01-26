@@ -27,7 +27,11 @@ export const InputTask = () => {
   };
 
   return (
-    <form ref={formRef} action={handleSubmit} className="flex gap-4 p-2 ">
+    <form
+      ref={formRef}
+      action={handleSubmit}
+      className="flex gap-4 w-full mb-4"
+    >
       <Input
         placeholder="Add new task"
         name="title"
@@ -35,6 +39,7 @@ export const InputTask = () => {
         disabled={isPending}
         autoFocus
         required
+        className="w-full"
       />
       <Button type="submit" disabled={isPending}>
         {isPending ? "🔃" : "📩"}

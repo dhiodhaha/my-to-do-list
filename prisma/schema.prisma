@@ -25,15 +25,17 @@ model Task {
   isCompleted Boolean   @default(false)
   isDaily     Boolean   @default(false)
   subtask     Subtask[]
-  date        DateTime @default(now())
+  date        DateTime  @default(now())
+  createdAt   DateTime  @default(now())
   user        User?     @relation(fields: [userId], references: [id])
   userId      String?
 }
 
 model Subtask {
-  id          String  @id @default(cuid())
+  id          String   @id @default(cuid())
   title       String
-  isCompleted Boolean @default(false)
-  task        Task?   @relation(fields: [taskId], references: [id])
+  isCompleted Boolean  @default(false)
+  task        Task?    @relation(fields: [taskId], references: [id], onDelete: Cascade)
   taskId      String?
+  createdAt   DateTime @default(now())
 }

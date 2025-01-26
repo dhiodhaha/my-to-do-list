@@ -33,7 +33,7 @@ export const DeleteButton = ({
           isVisible ? "opacity-100" : "opacity-0"
         }`}
       >
-        {isPending ? "Deleting ...." : "Delete"}
+        {isPending ? "Deleting ...." : "🗑️"}
       </Button>
     </form>
   );

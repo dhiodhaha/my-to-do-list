@@ -81,7 +81,7 @@ export function SubTasksList({
         {/* Move form to top */}
 
         {/* Subtasks list */}
-        {subtasks.map((subtask) => (
+        {optimisticSubtasks.map((subtask) => (
           <div
             key={subtask.id}
             className="flex items-center gap-2 text-sm p-2 hover:bg-gray-50 rounded"
@@ -92,6 +92,7 @@ export function SubTasksList({
               onCheckedChange={() =>
                 handleSubtaskToggle(subtask.id, subtask.isCompleted)
               }
+              disabled={isPending}
             />
             <span
               className={
