@@ -1,7 +1,6 @@
-import { Card } from "@/components/ui/Card";
-
 import { prisma } from "@/lib/utils";
 import { InputTask } from "./_components/InputTask";
+import TaskCard from "@/components/features/task/TaskCard";
 
 export default async function Home() {
   const tasks = await prisma.task.findMany();
@@ -10,13 +9,7 @@ export default async function Home() {
     <div>
       Ini Todolist
       <InputTask />
-      {tasks.map((task) => {
-        return (
-          <Card key={task.id}>
-            <h1>{task.title}</h1>
-          </Card>
-        );
-      })}
+      <TaskCard />
     </div>
   );
 }

@@ -1,6 +1,7 @@
 "use server";
 
 import { prisma } from "@/lib/utils";
+import { PrismaClientKnownRequestError } from "@prisma/client/runtime/library";
 import { revalidatePath } from "next/cache";
 import { z } from "zod";
 
@@ -10,16 +11,13 @@ const taskSchema = z.object({
 
 export async function createTask(formData: FormData) {
   try {
-    revalidatePath("/");
     const rawData = { title: formData.get("title") };
-
     const validateData = taskSchema.parse(rawData);
-
-    const task = await prisma.task.create({ data: validateData });
-
+    const createTask = await prisma.task.create({ data: validateData });
+    revalidatePath("/");
     return {
       success: true,
-      data: task,
+      data: createTask,
       status: 201,
       message: "Task created succesfully",
     };
@@ -33,7 +31,29 @@ export async function createTask(formData: FormData) {
 
 async function updateTask(formData: FormData) {}
 
-async function deleteTask(formData: FormData) {}
+export async function deleteTask(formData: FormData) {
+  try {
+    const taskId = formData.get("id");
+    const validateTaskId = z.string().cuid().parse(taskId);
+
+    const deletedTask = await prisma.task.delete({
+      where: { id: validateTaskId },
+    });
+    revalidatePath("/");
+
+    return {
+      success: true,
+      message: "Task deleted successfully",
+      status: 200,
+    };
+  } catch (error) {
+    if (error instanceof z.ZodError) {
+      return { success: false, error: "Invalid task ID", status: 400 };
+    }
+
+    return { success: false, error: "Failed to delete task", status: 500 };
+  }
+}
 
 async function createSubTask(formData: FormData) {}
 
