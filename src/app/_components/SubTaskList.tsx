@@ -3,7 +3,7 @@ import { motion } from "framer-motion";
 import { SubTask } from "@/types/task";
 import { Input } from "@/components/ui/Input";
 import { createSubtask, toggleSubtaskCompletion } from "@/lib/actions";
-import { useState, useTransition } from "react";
+import { useState, useTransition, useRef } from "react";
 import { Checkbox } from "@/components/ui/Checkbox";
 
 export function SubTasksList({
@@ -18,6 +18,7 @@ export function SubTasksList({
   const [input, setInput] = useState("");
   const [optimisticSubtasks, setOptimisticSubtasks] = useState(subtasks);
   const [isPending, startTransition] = useTransition();
+  const formRef = useRef<HTMLFormElement>(null);
 
   const handleSubtaskToggle = (subtaskId: string, currentState: boolean) => {
     setOptimisticSubtasks((prev) =>
@@ -29,6 +30,8 @@ export function SubTasksList({
     startTransition(async () => {
       const result = await toggleSubtaskCompletion(subtaskId, currentState);
       if (!result?.success) {
+        formRef.current?.reset();
+
         setOptimisticSubtasks((prev) =>
           prev.map((sub) =>
             sub.id === subtaskId ? { ...sub, isCompleted: currentState } : sub
@@ -52,7 +55,7 @@ export function SubTasksList({
     };
 
     setOptimisticSubtasks((prev) => [...prev, newSubtask]);
-
+    setInput("");
     startTransition(async () => {
       const formData = new FormData();
       formData.append("title", input);
@@ -78,8 +81,6 @@ export function SubTasksList({
       className="overflow-hidden"
     >
       <div className="mt-2 pl-7 space-y-2">
-        {/* Move form to top */}
-
         {/* Subtasks list */}
         {optimisticSubtasks.map((subtask) => (
           <div
@@ -103,7 +104,7 @@ export function SubTasksList({
             </span>
           </div>
         ))}
-        <form onSubmit={handleSubmit} className="mb-2">
+        <form ref={formRef} onSubmit={handleSubmit} className="mb-2">
           <Input
             placeholder="Add sub task"
             value={input}
